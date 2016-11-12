@@ -89,6 +89,8 @@ public class Kadai5 {
 					}
 
 				}
+
+				System.out.println(String.valueOf(i) + "フレームのスコア ⇒ " + String.valueOf(frameScore));
 				System.out.println("");
 			}
 
