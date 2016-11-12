@@ -1,6 +1,8 @@
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Scanner;
 
 public class Kadai5 {
@@ -12,12 +14,15 @@ public class Kadai5 {
 		Connection con = null;
 		Statement stm = null;
 		ResultSet rs = null;
+		Hashtable<Integer, ArrayList<Integer>> scoreTable = new Hashtable<>();
 
 		try {
 			// 接続
 			// con = dao.connectDB(con);
 			// if (con != null) {
-			kadai.SetScore();
+			kadai.setScore(scoreTable);
+
+			kadai.setDisp(scoreTable);
 			// }
 
 		} catch (Exception e) {
@@ -31,18 +36,21 @@ public class Kadai5 {
 	}
 
 	// スコアの設定
-	private void SetScore() {
+	private void setScore(Hashtable<Integer, ArrayList<Integer>> scoreTable) {
 
 		Scanner sc = new Scanner(System.in);
 		int score = 0; // 1投ごとのスコア
 		int frameScore = 0; // フレームごとのスコア
-		boolean isErr = false;
+		ArrayList<Integer> scoreList = new ArrayList<>();
+
+		boolean isErr = false; // 入力値が正常か
 
 		try {
 
 			// フレームごと
 			for (int i = 1; i <= 10; i++) {
 
+				scoreList = new ArrayList<>();
 				frameScore = 0;
 
 				System.out.println("=========== " + String.valueOf(i) + "フレーム ===========");
@@ -68,8 +76,8 @@ public class Kadai5 {
 								// スコアは0から10まで
 								isErr = true;
 
-							} else if (j == 2 && (frameScore + score) > 10) {
-								// 1投目と2投目の合計は10以下
+							} else if (i != 10 && j == 2 && (frameScore + score) > 10) {
+								// 10フレーム以外は1投目と2投目の合計は10以下
 								isErr = true;
 							}
 
@@ -79,18 +87,19 @@ public class Kadai5 {
 						} finally {
 							if (!isErr) {
 								frameScore += score;
+								scoreList.add(score);
 								break;
 
 							} else {
 								System.out.println("再入力してください。");
 							}
-
 						}
 					}
-
 				}
 
-				System.out.println(String.valueOf(i) + "フレームのスコア ⇒ " + String.valueOf(frameScore));
+				scoreTable.put(i, scoreList);
+				// System.out.println(String.valueOf(i) + "フレームのスコア ⇒ " +
+				// String.valueOf(frameScore));
 				System.out.println("");
 			}
 
@@ -101,6 +110,93 @@ public class Kadai5 {
 		} finally {
 			sc.close();
 		}
+	}
+
+	// スコアの表示
+	private void setDisp(Hashtable<Integer, ArrayList<Integer>> scoreTable) {
+
+		ArrayList<Integer> list = new ArrayList<>();
+		int totalScore = 0;
+
+		System.out.println("");
+		System.out.println(
+				"============================================================= 結果 =============================================================");
+		System.out.println("");
+
+		System.out.print("｜");
+		for (int i = 1; i <= 9; i++) {
+			System.out.print("   " + String.format("%3s", String.valueOf(i)) + "    ｜");
+		}
+		System.out.println("      10       ｜");
+
+		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+
+		System.out.print("｜");
+
+		for (int i = 1; i <= 10; i++) {
+			list = scoreTable.get(i);
+			for (Integer score : list) {
+				System.out.print(String.format("%4s", String.valueOf(score)) + "｜");
+			}
+		}
+
+		System.out.println("");
+		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+
+		System.out.print("｜");
+		for (int i = 1; i <= 9; i++) {
+			System.out.print("   " + String.format("%3s", totalScore += getResult(scoreTable, i)) + "    ｜");
+		}
+		System.out.println("      " + String.valueOf(totalScore += getResult(scoreTable, 10)) + "       ｜");
+	}
+
+	// スコアの計算
+	private int getResult(Hashtable<Integer, ArrayList<Integer>> scoreTable, int frame) {
+
+		int result = 0;
+		int score = 0;
+		int count = 0;
+		ArrayList<Integer> scoreList = new ArrayList<>();
+		ArrayList<Integer> workList = new ArrayList<>();
+
+		try {
+			scoreList = scoreTable.get(frame);
+
+			for (int i = 0; i < scoreList.size(); i++) {
+				score = scoreList.get(i);
+
+				if (i == 0 && score == 10) {
+					// ストライクの場合
+
+					result += score;
+					for (int j = frame + 1; j <= 10; j++) {
+						workList = scoreTable.get(j);
+						for (Integer work : workList) {
+							if (work != 0) {
+								result += work;
+								count += 1;
+							}
+							if (count == 2) {
+								break;
+							}
+						}
+						if (count == 2) {
+							break;
+						}
+					}
+
+				} else {
+					// それ以外
+					result += score;
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("処理に失敗しました。");
+			System.out.println(e.toString());
+		}
+
+		return result;
 	}
 
 }
