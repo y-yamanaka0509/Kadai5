@@ -41,13 +41,27 @@ public class Kadai5 {
 
 			for (int i = 1; i <= 10; i++) {
 				System.out.println("=========== " + String.valueOf(i) + "フレーム ===========");
+
 				for (int j = 1; j <= 3; j++) {
 					if (j == 3 && i != 10) {
 						break;
 					}
+
 					System.out.println(String.valueOf(j) + "投目のスコアを入力してください。");
-					System.out.print("⇒");
-					score = sc.nextInt();
+					while (true) {
+						try {
+							System.out.print("⇒");
+							score = Integer.parseInt(sc.next());
+							if (score >= 0 && score <= 10) {
+								break;
+							} else {
+								System.out.println("再入力してください。");
+							}
+						} catch (Exception ex) {
+							System.out.println("再入力してください。");
+						}
+					}
+
 				}
 				System.out.println("");
 			}
