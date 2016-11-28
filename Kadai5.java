@@ -127,7 +127,7 @@ public class Kadai5 {
 		for (int i = 1; i <= 9; i++) {
 			System.out.print("   " + String.format("%3s", String.valueOf(i)) + "    ｜");
 		}
-		System.out.println("      10       ｜");
+		System.out.println("       10       ｜");
 
 		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
 
