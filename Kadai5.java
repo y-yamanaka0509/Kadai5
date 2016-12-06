@@ -112,48 +112,11 @@ public class Kadai5 {
 		}
 	}
 
-	// スコアの表示
-	private void setDisp(Hashtable<Integer, ArrayList<Integer>> scoreTable) {
-
-		ArrayList<Integer> list = new ArrayList<>();
-		int totalScore = 0;
-
-		System.out.println("");
-		System.out.println(
-				"============================================================= 結果 =============================================================");
-		System.out.println("");
-
-		System.out.print("｜");
-		for (int i = 1; i <= 9; i++) {
-			System.out.print("   " + String.format("%3s", String.valueOf(i)) + "    ｜");
-		}
-		System.out.println("       10       ｜");
-
-		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
-
-		System.out.print("｜");
-
-		for (int i = 1; i <= 10; i++) {
-			list = scoreTable.get(i);
-			for (Integer score : list) {
-				System.out.print(String.format("%4s", String.valueOf(score)) + "｜");
-			}
-		}
-
-		System.out.println("");
-		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
-
-		System.out.print("｜");
-		for (int i = 1; i <= 9; i++) {
-			System.out.print("   " + String.format("%3s", totalScore += getResult(scoreTable, i)) + "    ｜");
-		}
-		System.out.println("      " + String.valueOf(totalScore += getResult(scoreTable, 10)) + "       ｜");
-	}
-
 	// スコアの計算
 	private int getResult(Hashtable<Integer, ArrayList<Integer>> scoreTable, int frame) {
 
 		int result = 0;
+		int lastScore = 0;
 		int score = 0;
 		int count = 0;
 		ArrayList<Integer> scoreList = new ArrayList<>();
@@ -185,9 +148,21 @@ public class Kadai5 {
 						}
 					}
 
+				} else if (i == 1 && lastScore + score == 10) {
+					// スペアの場合
+
+					result += score;
+					if (frame < 10) {
+						result += scoreTable.get(frame + 1).get(0);
+					} else {
+						result += scoreTable.get(frame).get(2);
+					}
+					break;
+
 				} else {
 					// それ以外
 					result += score;
+					lastScore = score;
 				}
 			}
 
@@ -197,6 +172,48 @@ public class Kadai5 {
 		}
 
 		return result;
+	}
+
+	// スコアの表示
+	private void setDisp(Hashtable<Integer, ArrayList<Integer>> scoreTable) {
+
+		ArrayList<Integer> list = new ArrayList<>();
+		int totalScore = 0;
+
+		// 結果
+		System.out.println("");
+		System.out.println(
+				"============================================================= 結果 =============================================================");
+		System.out.println("");
+
+		System.out.print("｜");
+		for (int i = 1; i <= 9; i++) {
+			System.out.print("   " + String.format("%3s", String.valueOf(i)) + "    ｜");
+		}
+		System.out.println("       10       ｜");
+
+		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+
+		System.out.print("｜");
+
+		// 投球結果
+		for (int i = 1; i <= 10; i++) {
+			list = scoreTable.get(i);
+			for (Integer score : list) {
+				System.out.print(String.format("%4s", String.valueOf(score)) + "｜");
+			}
+		}
+
+		System.out.println("");
+		System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+
+		System.out.print("｜");
+
+		// スコア
+		for (int i = 1; i <= 9; i++) {
+			System.out.print("   " + String.format("%3s", totalScore += getResult(scoreTable, i)) + "    ｜");
+		}
+		System.out.println("      " + String.valueOf(totalScore += getResult(scoreTable, 10)) + "       ｜");
 	}
 
 }
